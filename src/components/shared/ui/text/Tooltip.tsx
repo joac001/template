@@ -34,7 +34,6 @@ export default function Tooltip({ content, children, placement = 'top', offset =
     const tooltipRef = useRef<HTMLDivElement | null>(null);
     const [isVisible, setIsVisible] = useState(false);
     const [position, setPosition] = useState<PositionStyle>({ top: 0, left: 0, transform: defaultTransform[placement] });
-    const [actualPlacement, setActualPlacement] = useState<TooltipPlacement>(placement);
 
     const calculatePosition = useCallback((anchor: DOMRect, tooltipPlacement: TooltipPlacement): PositionStyle => {
         const next: PositionStyle = { top: 0, left: 0, transform: defaultTransform[tooltipPlacement] };
@@ -73,8 +72,8 @@ export default function Tooltip({ content, children, placement = 'top', offset =
         // Calcular las dimensiones estimadas del tooltip basadas en su posición
         let tooltipLeft = pos.left;
         let tooltipTop = pos.top;
-        let tooltipWidth = tooltipRect.width || 200; // fallback width
-        let tooltipHeight = tooltipRect.height || 40; // fallback height
+        const tooltipWidth = tooltipRect.width || 200; // fallback width
+        const tooltipHeight = tooltipRect.height || 40; // fallback height
 
         // Ajustar según el transform
         switch (tooltipPlacement) {
@@ -130,9 +129,8 @@ export default function Tooltip({ content, children, placement = 'top', offset =
         if (!anchor) return;
 
         const rect = anchor.getBoundingClientRect();
-        const { placement: bestPlacement, position: bestPosition } = findBestPlacement(rect);
+        const { position: bestPosition } = findBestPlacement(rect);
 
-        setActualPlacement(bestPlacement);
         setPosition(bestPosition);
     }, [findBestPlacement]);
 
@@ -171,7 +169,7 @@ export default function Tooltip({ content, children, placement = 'top', offset =
             </div>,
             document.body
         );
-    }, [className, content, isVisible, position.left, position.top, position.transform]);
+    }, [content, isVisible, position.left, position.top, position.transform]);
 
     const handleMouseEnter = () => setIsVisible(true);
     const handleMouseLeave = () => setIsVisible(false);

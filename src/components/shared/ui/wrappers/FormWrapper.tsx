@@ -1,5 +1,5 @@
 'use client';
-import React, { FormEvent, ReactNode, useRef, Children, cloneElement, isValidElement } from 'react';
+import React, { FormEvent, ReactNode, useRef, Children, cloneElement, isValidElement, ReactElement, JSXElementConstructor } from 'react';
 import Button, { ButtonProps } from '@/components/shared/ui/buttons/Button';
 import Box from '@/components/shared/ui/content/Box';
 import { InputRef } from '@/components/shared/ui/inputs/Input';
@@ -23,7 +23,7 @@ export default function FormWrapper({
     className = '',
     title,
 }: FormWrapperProps) {
-    const formFieldRefs = useRef<(InputRef | DropMenuRef)[]>([]);
+    const formFieldRefs = useRef<(InputRef | DropMenuRef | null)[]>([]);
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -77,6 +77,23 @@ export default function FormWrapper({
     }
 
     // Función para clonar children y asignar refs
+    type FormFieldRef = InputRef | DropMenuRef;
+
+    type FormFieldElement = ReactElement<{ ref?: React.Ref<FormFieldRef>; children?: ReactNode }>;
+
+    const isFormFieldElement = (element: ReactElement): element is FormFieldElement => {
+        if (typeof element.type === 'string') {
+            return false;
+        }
+
+        const elementType = element.type as JSXElementConstructor<Record<string, unknown>> & { displayName?: string };
+        return elementType.displayName === 'Input' || elementType.displayName === 'DropMenu';
+    };
+
+    const hasChildrenProp = (element: ReactElement): element is ReactElement<{ children?: ReactNode }> => {
+        return typeof element.props === 'object' && element.props !== null && 'children' in element.props;
+    };
+
     const renderChildren = (children: ReactNode): ReactNode => {
         let refIndex = 0;
 
@@ -86,23 +103,19 @@ export default function FormWrapper({
             }
 
             // Si es un Input o DropMenu, asignar ref
-            if (child.type && ((child.type as any).displayName === 'Input' || (child.type as any).displayName === 'DropMenu')) {
+            if (isFormFieldElement(child)) {
                 const currentRefIndex = refIndex++;
-                return cloneElement(child as any, {
-                    ...child.props,
-                    ref: (ref: InputRef | DropMenuRef) => {
-                        if (ref) {
-                            formFieldRefs.current[currentRefIndex] = ref;
-                        }
+                return cloneElement(child, {
+                    ref: (ref: FormFieldRef | null) => {
+                        formFieldRefs.current[currentRefIndex] = ref;
                     }
                 });
             }
 
             // Si tiene children, procesarlos recursivamente
-            if (child.props && (child.props as any).children) {
-                return cloneElement(child as any, {
-                    ...(child.props || {}),
-                    children: Children.map((child.props as any).children, cloneChild)
+            if (hasChildrenProp(child)) {
+                return cloneElement(child, {
+                    children: Children.map(child.props.children, cloneChild)
                 });
             }
 

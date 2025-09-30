@@ -7,6 +7,7 @@ import Box from "@/components/shared/ui/content/Box";
 
 export default function ClientForm({ dropdownOptions }: { dropdownOptions: DropMenuOption[] }) {
     const handleSubmit = (formData: FormData) => {
+        void formData;
         // Handle form submission logic here
         // You can access form data like: formData.get('fieldname')
     };

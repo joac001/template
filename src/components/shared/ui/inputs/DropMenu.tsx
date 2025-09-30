@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHand
 import Box from "@/components/shared/ui/content/Box";
 
 export interface DropMenuOption {
-    value: any;
+    value: string | number;
     label?: string;
 }
 
@@ -32,7 +32,7 @@ export interface DropMenuRef {
     focus: () => void;
 }
 
-const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
+const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({ 
     options,
     disabled = false,
     placeholder = "Selecciona una opción",
@@ -46,8 +46,8 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
     customErrorMessage,
 }, ref) => {
 
-    const [selectedValue, setSelectedValue] = useState<any>(value ?? defaultValue ?? null);
-    const [selectedLabel, setSelectedLabel] = useState<string | number | null>(placeholder);
+    const [selectedValue, setSelectedValue] = useState<string | number | null>(value ?? defaultValue ?? null);
+    const [selectedLabel, setSelectedLabel] = useState<string>(placeholder);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isValid, setIsValid] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -72,7 +72,7 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
     const getLabelByValue = useCallback((val: string | number | null): string => {
         if (val === null || val === undefined) return placeholder;
         const option = options.find(opt => opt.value === val);
-        return option ? (option.label ? option.label : option.value as string) : placeholder;
+        return option ? (option.label ?? String(option.value)) : placeholder;
     }, [options, placeholder]);
 
     // Manejar selección de opción
@@ -80,7 +80,7 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
         if (disabled) return;
 
         setSelectedValue(option.value);
-        setSelectedLabel(option.label ? option.label : option.value as string);
+        setSelectedLabel(option.label ?? String(option.value));
         setIsOpen(false);
 
         const validation = performValidation(option.value);
@@ -166,7 +166,7 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
                 ref={hiddenInputRef}
                 type="hidden"
                 name={name}
-                value={selectedValue || ''}
+                value={selectedValue ?? ''}
                 required={required}
             />
             {label && (
