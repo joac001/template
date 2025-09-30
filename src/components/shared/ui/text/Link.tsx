@@ -1,6 +1,7 @@
 'use client';
 
 import Box from '@/components/shared/ui/content/Box';
+import { getColorClasses } from '@/types/ColorType';
 
 export interface LinkProps {
     text: string;
@@ -10,6 +11,7 @@ export interface LinkProps {
 }
 
 export default function Link({ icon, text, url, newWindow = true }: LinkProps) {
+    const { bgHover } = getColorClasses('secondary');
     const normalizeUrl = (url: string): string => {
         if (url.startsWith('http://') || url.startsWith('https://')) {
             return url;
@@ -43,7 +45,7 @@ export default function Link({ icon, text, url, newWindow = true }: LinkProps) {
             tabIndex={0}
             role="button"
             aria-label={`Open link to ${text}`}
-            className={`flex items-center w-fit gap-2 text-lg md:text-lg text-pretty select-none hover:text-emerald-300/70 cursor-pointer transition-all duration-500 ease-in-out`}
+            className={`flex items-center w-fit gap-2 text-lg md:text-lg text-pretty select-none ${bgHover} cursor-pointer transition-all duration-500 ease-in-out`}
         >
             {icon && <i className={`${icon} w-5 h-fit text-center`} aria-hidden="true" />}
             <Box

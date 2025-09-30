@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 
 import Box from "@/components/shared/ui/content/Box";
 import Typography from "@/components/shared/ui/text/Typography";
+import { getColorClasses } from "@/types/ColorType";
 
 export interface NavLink {
     icon: string;
@@ -23,7 +24,9 @@ export default function NavBar({ title, links }: NavBarProps) {
     const navRef = useRef<HTMLDivElement>(null);
     const linksRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const pathname = usePathname();;
+    const pathname = usePathname();
+
+    const { bg: navLinkBg, bgHover } = getColorClasses('secondary');
 
     const handleOpen = () => {
         setIsOpen(!isOpen);
@@ -79,16 +82,17 @@ export default function NavBar({ title, links }: NavBarProps) {
             >
                 {links.map((link, index) => {
                     const isCurrentPage = pathname === link.href;
-                    const shouldShowActiveStyle = isCurrentPage && !isMenuHovered;
+                    const shouldShowActiveStyle = isCurrentPage;
 
                     return (
                         <Box
                             key={index}
                             className={`flex items-center justify-center space-x-2 mt-2 ml-2 w-fit h-fit rounded-2xl py-2 px-4 backdrop-blur-md shadow-lg cursor-pointer transition-all duration-100 ease-in-out select-none
                             ${shouldShowActiveStyle
-                                    ? 'bg-gradient-to-br from-emerald-300/60 to-emerald-600/40'
-                                    : 'bg-gradient-to-br from-slate-600/50 to-slate-600/50 hover:from-emerald-300/60 hover:to-emerald-600/40'
+                                    ? navLinkBg
+                                    : bgHover
                                 }
+                                hover:scale-105
                             ${isOpen
                                     ? 'translate-x-0 opacity-100'
                                     : '-translate-x-full opacity-50 invisible'

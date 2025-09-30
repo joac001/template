@@ -179,6 +179,8 @@ export default function Home() {
             <Box className="">
                 <Banner icon="fas fa-info" title="Ejemplo Informacion" description="Banner de ejemplo para alguna informacion" color="info" />
                 <Banner icon="fas fa-warning" title="Ejemplo Advertencia" description="Banner de ejemplo para alguna advertencia" color="warning" />
+                <Banner icon="fas fa-check" title="Ejemplo Exito" description="Banner de ejemplo para alguna advertencia" color="success" />
+                <Banner icon="fas fa-times" title="Ejemplo Error" description="Banner de ejemplo para alguna advertencia" color="error" />
             </Box>
 
             <ClientForm dropdownOptions={options} />

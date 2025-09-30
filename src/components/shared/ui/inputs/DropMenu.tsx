@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from "react";
 import Box from "@/components/shared/ui/content/Box";
+import { getColorClasses } from "@/types/ColorType";
 
 export interface DropMenuOption {
     value: string | number;
@@ -32,7 +33,7 @@ export interface DropMenuRef {
     focus: () => void;
 }
 
-const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({ 
+const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
     options,
     disabled = false,
     placeholder = "Selecciona una opción",
@@ -159,6 +160,8 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
         focus: () => dropdownRef.current?.focus()
     }));
 
+    const { bg: bgSelectedLabel, bgHover: bgHoverLabel } = getColorClasses('primary');
+
     return (
         <Box className="relative w-full">
             {/* Input hidden para FormData */}
@@ -177,7 +180,7 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
             )}
             <div ref={dropdownRef} >
                 <Box
-                    className={`flex w-full items-center justify-between ${isOpen ? 'rounded-t-lg rounded-b-none' : 'rounded-lg'} border ${isValid ? 'border-white/15' : 'border-red-500'} bg-stone-800 px-3 py-2 text-md md:text-lg transition-all duration-200 ease-in-out ${disabled ? 'cursor-not-allowed opacity-50' : isValid ? 'hover:border-white/30' : 'hover:border-red-500'}`}
+                    className={`flex w-full items-center justify-between ${isOpen ? 'rounded-t-lg rounded-b-none' : 'rounded-lg'} border ${isValid ? 'border-white/15' : 'border-red-500'} bg-slate-800 cursor-pointer px-3 py-2 text-md md:text-lg transition-all duration-200 ease-in-out ${disabled ? 'cursor-not-allowed opacity-50' : isValid ? 'hover:border-white/30' : 'hover:border-red-500'}`}
                     onClick={handleToggle}
                 >
                     <span className={selectedValue === null ? 'text-gray-400' : ''}>
@@ -187,7 +190,7 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
                 </Box>
 
                 {(isOpen && !disabled &&
-                    <Box className={`absolute left-0 right-0 z-50 max-h-60 overflow-y-auto border border-white/15 bg-stone-900/95 shadow-xl backdrop-blur transition-all duration-100 ease-in-out ${isOpen ? 'rounded-b-lg rounded-t-none' : 'rounded-lg'}`}>
+                    <Box className={`absolute left-0 right-0 z-50 max-h-60 overflow-y-auto border border-white/15 bg-slate-800/90 cursor-pointer shadow-xl backdrop-blur transition-all duration-100 ease-in-out ${isOpen ? 'rounded-b-lg rounded-t-none' : 'rounded-lg'}`}>
                         {options.length === 0 ? (
                             // Quede aca
                             <Box className="p-2 md:p-3 text-center text-md md:text-lg text-gray-400">
@@ -197,7 +200,7 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
                             options.map((option, index) => (
                                 <Box
                                     key={`${option.value}-${index}`}
-                                    className={`p-2 md:p-3 text-md md:text-lg text-pretty transition-all duration-600 ease-out ${selectedValue === option.value ? 'bg-emerald-700/60' : 'hover:bg-emerald-700/30'}`}
+                                    className={`p-2 md:p-3 text-md md:text-lg text-pretty transition-all duration-600 ease-out ${selectedValue === option.value ? bgSelectedLabel : ''} ${bgHoverLabel}`}
                                     onClick={() => handleSelectOption(option)}
                                 >
                                     {option.label || option.value}

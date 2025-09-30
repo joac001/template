@@ -22,13 +22,22 @@ export default function ClientForm({ dropdownOptions }: { dropdownOptions: DropM
 
     return (
         <FormWrapper onSubmit={handleSubmit} buttons={buttons}>
-            <Input
-                label="Nombre"
-                name="nombre"
-                type="text"
-                placeholder="Ingrese el nombre"
-                required
-            />
+            <Box className="flex flex-col md:flex-row gap-4">
+                <Input
+                    label="Nombre"
+                    name="nombre"
+                    type="text"
+                    placeholder="Ingrese el nombre"
+                    required
+                />
+                <Input
+                    label="Nacimiento"
+                    name="nacimiento"
+                    type="date"
+                    placeholder="Ingrese la fecha de nacimiento"
+                    required
+                />
+            </Box>
 
             <Box className="flex flex-col md:flex-row gap-4">
                 <Input

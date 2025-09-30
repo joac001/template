@@ -2,7 +2,77 @@
 
 import { useEffect, useState, useCallback, forwardRef, useImperativeHandle, useRef } from "react";
 import Box from "@/components/shared/ui/content/Box";
-export type InputType = 'text' | 'email' | 'password' | 'phone' | 'number';
+export type InputType = 'text' | 'email' | 'password' | 'phone' | 'number' | 'date';
+
+const DATE_DISPLAY_REGEX = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+const DATE_ISO_REGEX = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+const formatDateInput = (rawValue: string): string => {
+    const digits = rawValue.replace(/\D/g, '').slice(0, 8);
+    const day = digits.slice(0, 2);
+    const month = digits.slice(2, 4);
+    const year = digits.slice(4, 8);
+    let formatted = day;
+
+    if (month) {
+        formatted = `${formatted}${formatted ? '/' : ''}${month}`;
+    }
+
+    if (year) {
+        formatted = `${formatted}${formatted ? '/' : ''}${year}`;
+    }
+
+    return formatted;
+};
+
+const normalizeDateDisplayValue = (value: string | number | undefined | null): string => {
+    if (value === undefined || value === null) {
+        return '';
+    }
+
+    const stringValue = String(value).trim();
+
+    if (stringValue === '') {
+        return '';
+    }
+
+    const isoMatch = DATE_ISO_REGEX.exec(stringValue);
+    if (isoMatch) {
+        const [, year, month, day] = isoMatch;
+        return `${day}/${month}/${year}`;
+    }
+
+    return formatDateInput(stringValue);
+};
+
+const displayDateToIso = (displayValue: string): string | null => {
+    const match = DATE_DISPLAY_REGEX.exec(displayValue);
+    if (!match) {
+        return null;
+    }
+
+    const [, day, month, year] = match;
+    return `${year}-${month}-${day}`;
+};
+
+const isValidDisplayDate = (value: string): boolean => {
+    const match = DATE_DISPLAY_REGEX.exec(value);
+    if (!match) {
+        return false;
+    }
+
+    const [, dayString, monthString, yearString] = match;
+    const day = Number(dayString);
+    const month = Number(monthString);
+    const year = Number(yearString);
+
+    if (month < 1 || month > 12) {
+        return false;
+    }
+
+    const date = new Date(year, month - 1, day);
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+};
 
 
 const validateInput = (value: string | number, type: InputType): boolean => {
@@ -15,6 +85,8 @@ const validateInput = (value: string | number, type: InputType): boolean => {
             return phoneRegex.test(value as string);
         case 'number':
             return !isNaN(Number(value));
+        case 'date':
+            return typeof value === 'string' && isValidDisplayDate(value);
         case 'text':
             return true;
         case 'password':
@@ -53,6 +125,8 @@ const getErrorMessage = (type: InputType, isRequired: boolean = false): string =
             return 'El input no es un número de teléfono válido.';
         case 'number':
             return 'El input no es un número válido.';
+        case 'date':
+            return 'La fecha debe tener el formato dd/mm/aaaa y ser válida.';
         case 'password':
             return 'La contraseña debe tener al menos 6 caracteres, sin espacios, con al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo (!@#$%^&*(),.?":{}|<>).';
         default:
@@ -106,14 +180,20 @@ const Input = forwardRef<InputRef, InputProps>(({
     rows
 }, ref) => {
 
-    const [inputValue, setInputValue] = useState<string | number>(value || defaultValue || '');
-    const [inputType, setInputType] = useState<InputType>(type);
+    const initialType = type;
+    const [inputType, setInputType] = useState<InputType>(initialType);
+    const [inputValue, setInputValue] = useState<string | number>(() => (
+        initialType === 'date'
+            ? normalizeDateDisplayValue(value ?? defaultValue ?? '')
+            : (value ?? defaultValue ?? '')
+    ));
     const [isValid, setIsValid] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>('');
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+    const hiddenDateInputRef = useRef<HTMLInputElement>(null);
 
-    const inputClass = `w-full p-2 rounded-lg bg-stone-800 focus:outline-none border-2 ${isValid ? 'focus:ring-2 focus:ring-emerald-500/70 border-transparent' : 'border-red-500 focus:ring-0'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`;
+    const inputClass = `w-full p-2 rounded-lg bg-slate-800 focus:outline-none border-2 cursor-auto ${isValid ? `focus:ring-2 border-transparent` : 'border-red-500 focus:ring-0'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`;
 
     // Función para validar el input combinando validación por defecto y personalizada
     const performValidation = useCallback((val: string | number): { isValid: boolean, errorMessage: string | null } => {
@@ -150,24 +230,29 @@ const Input = forwardRef<InputRef, InputProps>(({
         return { isValid: valid, errorMessage: message };
     }, [customErrorMessage, customValidator, inputType, required]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const newValue = e.target.value;
-        setInputValue(newValue);
+    const applyValue = useCallback((rawValue: string | number) => {
+        const processedValue = inputType === 'date'
+            ? normalizeDateDisplayValue(rawValue)
+            : rawValue;
 
-        // Realizar validación
-        const validation = performValidation(newValue);
+        setInputValue(processedValue);
+
+        const validation = performValidation(processedValue);
         setIsValid(validation.isValid);
         setErrorMessage(validation.errorMessage);
 
-        // Notificar al padre sobre el cambio de valor
         if (onValueChange) {
-            onValueChange(newValue);
+            onValueChange(processedValue);
         }
 
-        // Notificar al padre sobre el cambio de validación
         if (onValidationChange) {
             onValidationChange(validation.isValid, validation.errorMessage);
         }
+    }, [inputType, onValidationChange, onValueChange, performValidation]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const newValue = e.target.value;
+        applyValue(inputType === 'date' ? formatDateInput(newValue) : newValue);
     };
 
     // Effect para manejar cambios en props externas
@@ -188,14 +273,17 @@ const Input = forwardRef<InputRef, InputProps>(({
     // Effect para sincronizar valor inicial
     useEffect(() => {
         if (value !== undefined) {
-            setInputValue(value);
+            setInputValue(inputType === 'date' ? normalizeDateDisplayValue(value) : value);
         }
-    }, [value]);
+    }, [value, inputType]);
 
     // Effect para sincronizar tipo de input
     useEffect(() => {
         if (type !== inputType) {
             setInputType(type);
+            if (type === 'date') {
+                setInputValue(prev => normalizeDateDisplayValue(prev));
+            }
         }
     }, [type, inputType]);
 
@@ -203,10 +291,46 @@ const Input = forwardRef<InputRef, InputProps>(({
         setShowPassword(!showPassword);
     };
 
+    const openDatePicker = () => {
+        if (disabled) {
+            return;
+        }
+
+        const isoValue = typeof inputValue === 'string' ? displayDateToIso(inputValue) : null;
+
+        const pickerInput = hiddenDateInputRef.current;
+        if (pickerInput) {
+            pickerInput.value = isoValue ?? '';
+            const showPicker = (pickerInput as HTMLInputElement & { showPicker?: () => void }).showPicker;
+            if (typeof showPicker === 'function') {
+                showPicker.call(pickerInput);
+            } else {
+                pickerInput.click();
+            }
+        }
+    };
+
+    const handleNativeDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const isoValue = event.target.value;
+        if (!isoValue) {
+            applyValue('');
+            return;
+        }
+
+        const displayValue = normalizeDateDisplayValue(isoValue);
+        applyValue(displayValue);
+    };
+
     // Exponer métodos a través de ref
     useImperativeHandle(ref, () => ({
         getValue: () => inputValue,
-        setValue: (value: string | number) => setInputValue(value),
+        setValue: (newValue: string | number) => {
+            if (inputType === 'date') {
+                setInputValue(normalizeDateDisplayValue(newValue));
+                return;
+            }
+            setInputValue(newValue);
+        },
         validate: () => {
             const validation = performValidation(inputValue);
             setIsValid(validation.isValid);
@@ -215,6 +339,14 @@ const Input = forwardRef<InputRef, InputProps>(({
         },
         focus: () => inputRef.current?.focus()
     }));
+
+    const resolvedPlaceholder = inputType === 'date' ? (placeholder ?? 'dd/mm/aaaa') : placeholder;
+
+    const resolvedType = inputType === 'password'
+        ? (showPassword ? 'text' : 'password')
+        : inputType === 'date'
+            ? 'text'
+            : inputType;
 
     return (
         <Box className="w-full">
@@ -227,6 +359,15 @@ const Input = forwardRef<InputRef, InputProps>(({
                     <Box className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none z-10">
                         <i className={icon} />
                     </Box>
+                )}
+                {inputType === 'date' && (
+                    <input
+                        ref={hiddenDateInputRef}
+                        type="date"
+                        onChange={handleNativeDateChange}
+                        className="absolute opacity-0 pointer-events-none w-0 h-0"
+                        tabIndex={-1}
+                    />
                 )}
                 {rows && rows > 1 ? (
                     <textarea
@@ -244,13 +385,15 @@ const Input = forwardRef<InputRef, InputProps>(({
                     <input
                         ref={inputRef as React.RefObject<HTMLInputElement>}
                         name={name}
-                        type={inputType === 'password' && !showPassword ? 'password' : inputType === 'password' ? 'text' : inputType}
+                        type={resolvedType}
+                        inputMode={inputType === 'date' ? 'numeric' : undefined}
+                        pattern={inputType === 'date' ? "\\d{2}/\\d{2}/\\d{4}" : undefined}
                         value={inputValue}
                         onChange={handleChange}
-                        placeholder={placeholder}
+                        placeholder={resolvedPlaceholder}
                         disabled={disabled}
                         required={required}
-                        className={`${icon ? 'pl-10' : ''} ${inputClass} ${inputType === 'password' ? 'pr-12' : ''}`}
+                        className={`${icon ? 'pl-10' : ''} ${inputClass} ${(inputType === 'password' || inputType === 'date') ? 'pr-12' : ''}`}
                     />
                 )}
                 {inputType === 'password' && (
@@ -265,6 +408,16 @@ const Input = forwardRef<InputRef, InputProps>(({
                         ) : (
                             <i className="fas fa-eye-slash" />
                         )}
+                    </button>
+                )}
+                {inputType === 'date' && (
+                    <button
+                        type="button"
+                        onClick={openDatePicker}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white focus:outline-none z-10"
+                        disabled={disabled}
+                    >
+                        <i className="far fa-calendar-alt" />
                     </button>
                 )}
             </Box>
