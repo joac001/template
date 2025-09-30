@@ -12,6 +12,7 @@ import Tooltip from "@/components/shared/ui/text/Tooltip";
 import ClientForm from "./_homeComponents/ClientForm";
 import { useModal } from "@/context/ModalContext";
 import { useNotification } from "@/context/NotificationContext";
+import Chip from "@/components/shared/ui/content/Chip";
 
 export default function Home() {
 
