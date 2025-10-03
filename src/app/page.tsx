@@ -148,7 +148,7 @@ export default function Home() {
                     <Typography variant="caption">Typography</Typography>
                     <Box className="flex flex-row w-fit gap-4">
                         <Button type="primary" text="Open modal" onClick={handleOpenModal} />
-                        <Button type="secondary" text="Show notification" onClick={handleShowNotification} />
+                        <Button type="info" text="Show notification" onClick={handleShowNotification} />
                     </Box>
                 </Card>
 
@@ -160,7 +160,7 @@ export default function Home() {
                     <Typography variant="caption">Typography</Typography>
                     <Box className="flex flex-row w-fit gap-4">
                         <Button type="primary" text="Open modal" onClick={handleOpenModal} />
-                        <Button type="secondary" text="Show notification" onClick={handleShowNotification} />
+                        <Button type="info" text="Show notification" onClick={handleShowNotification} />
                     </Box>
                 </Card>
             </Box>
@@ -172,7 +172,7 @@ export default function Home() {
                 <Typography variant="caption">Typography</Typography>
                 <Box className="flex flex-row w-fit gap-4">
                     <Button type="primary" text="Open modal" onClick={handleOpenModal} />
-                    <Button type="secondary" text="Show notification" onClick={handleShowNotification} />
+                    <Button type="info" text="Show notification" onClick={handleShowNotification} />
                 </Box>
             </Card>
 

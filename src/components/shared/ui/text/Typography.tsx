@@ -16,7 +16,7 @@ const variantClasses: { [key in TypographyProps['variant']]: string } = {
 };
 
 export default function Typography({ variant, children, color }: TypographyProps) {
-    const { text } = color ? getColorClasses(color) : { text: 'text-white' };
+    const { text } = color ? getColorClasses(color) : { text: 'text-black' };
     const classes = `${variantClasses[variant]} ${text} text-pretty`.trim();
 
     switch (variant) {
