@@ -1,32 +1,41 @@
-import { ColorKey, getColorClasses } from "@/types/ColorType";
 import Typography from "@/components/shared/ui/text/Typography";
 import Box from "@/components/shared/ui/content/Box";
 
+type ColorKey =
+    | "primary"   // naranja (brand)
+    | "accent"    // azul
+    | "success"
+    | "warning"
+    | "danger"
+    | "info"
+    | "neutral";
+
 export interface BannerProps {
-    icon: string;        // pasá la clase completa (ej: "fas fa-info")
+    icon: string;       // clase completa: "fas fa-info-circle"
     color: ColorKey;
     title: string;
     description: string;
 }
 
 export default function Banner({ icon, color, title, description }: BannerProps) {
-    const c = getColorClasses(color);
-
     return (
         <Box
+            data-banner={color}
             className={[
                 "relative flex w-full items-start md:items-center gap-4",
                 "rounded-2xl p-4 md:p-5",
-                c.bg60, c.border, c.softBorder, c.softShadow,
+                // colores/estilos via variables
+                "bg-[var(--bn-surface)] border border-[var(--bn-border)]",
+                "shadow-[0_10px_25px_-5px_rgba(0,0,0,.12),_0_8px_10px_-6px_rgba(0,0,0,.12)]",
             ].join(" ")}
         >
-            {/* Barra decorativa izquierda (no afecta el borde) */}
+            {/* Barra decorativa izquierda */}
             <span
+                aria-hidden
                 className={[
-                    "pointer-events-none absolute inset-y-3 left-2",
-                    "w-1.5 rounded-full",
-                    c.gradient,                                  // gradiente del color
-                    "shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
+                    "pointer-events-none absolute inset-y-3 left-2 w-1.5 rounded-full",
+                    "bg-gradient-to-b from-[var(--bn-bar-from)] to-[var(--bn-bar-to)]",
+                    "shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]",
                 ].join(" ")}
             />
 
@@ -34,12 +43,12 @@ export default function Banner({ icon, color, title, description }: BannerProps)
             <div
                 className={[
                     "flex items-center justify-center",
-                    "h-11 w-11 md:h-12 md:w-12 rounded-xl text-white",
-                    c.iconGradient, "ring-1 ring-white/40",
-                    "shadow-[0_8px_20px_rgba(0,0,0,0.12)]"
+                    "h-11 w-11 md:h-12 md:w-12 rounded-xl text-white ring-1 ring-white/40",
+                    "bg-gradient-to-br from-[var(--bn-icon-from)] to-[var(--bn-icon-to)]",
+                    "shadow-[0_8px_20px_rgba(0,0,0,0.12)]",
                 ].join(" ")}
             >
-                <i className={icon} /> {/* ya no concatenamos 'fas fa-' */}
+                <i className={icon} />
             </div>
 
             {/* Texto */}

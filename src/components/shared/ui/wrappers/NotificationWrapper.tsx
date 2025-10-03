@@ -1,16 +1,20 @@
 "use client";
 
-import React, { ReactNode, useEffect, useState } from 'react';
-import { ColorKey, getColorClasses } from '@/types/ColorType';
+import React, { ReactNode, useEffect, useState } from "react";
 
+const normalize = (c: string) =>
+    c === "secondary" ? "accent" : c === "error" ? "danger" : c;
 
 interface NotificationWrapperProps {
-    children: ReactNode;
+    children?: ReactNode;
     isOpen: boolean;
     duration: number;
     onClose?: () => void;
     props: {
-        icon: string; color: ColorKey; title: string; description: string;
+        icon?: string;
+        color?: string;
+        title?: string;
+        description?: string;
     };
 }
 
@@ -19,7 +23,7 @@ const NotificationWrapper: React.FC<NotificationWrapperProps> = ({
     duration,
     onClose,
     props,
-}: NotificationWrapperProps) => {
+}) => {
     const [visible, setVisible] = useState(false);
     const [isFadingOut, setIsFadingOut] = useState(false);
 
@@ -27,16 +31,15 @@ const NotificationWrapper: React.FC<NotificationWrapperProps> = ({
         if (isOpen) {
             setVisible(true);
             setIsFadingOut(false);
-
             if (duration > 0) {
                 const timer = setTimeout(() => {
                     setIsFadingOut(true);
-                    setTimeout(() => {
+                    const t2 = setTimeout(() => {
                         setVisible(false);
                         onClose?.();
                     }, 300);
+                    return () => clearTimeout(t2);
                 }, duration);
-
                 return () => clearTimeout(timer);
             }
         } else {
@@ -47,16 +50,35 @@ const NotificationWrapper: React.FC<NotificationWrapperProps> = ({
 
     if (!visible) return null;
 
-    const { color, icon, title, description } = props || { color: 'info' as ColorKey, icon: 'info', title: '', description: '' };
-    const { bg } = getColorClasses(color);
+    const {
+        color = "info",
+        icon = "info-circle",
+        title = "",
+        description = "",
+    } = props || {};
+
+    const variant = normalize(color);
 
     return (
-        <div className={`w-fit max-w-md items-center px-1 py-1 md:px-4 md:py-2 rounded-md ${bg} fixed top-5 left-1/2 transform -translate-x-1/2 z-notification shadow-lg shadow-gray-950 transition-all duration-500 ease-in-out ${isFadingOut ? 'opacity-0 -translate-y-full' : 'opacity-100 translate-y-0'}`}>
-            <div className='flex items-center'>
-                <i className={`fas fa-${icon} text-white text-lg md:text-xl mr-2 md:mr-6`} />
+        <div
+            role="status"
+            aria-live="polite"
+            data-ntf={variant}
+            className={[
+                "fixed top-5 left-1/2 -translate-x-1/2 z-notification",
+                "max-w-md w-fit rounded-xl border-2 px-3 py-2 md:px-4 md:py-3",
+                "shadow-[0_10px_25px_-5px_rgba(0,0,0,.12),_0_8px_10px_-6px_rgba(0,0,0,.12)]",
+                // 👇 usa el canal color:
+                "bg-[color:var(--ntf-bg)] text-[color:var(--ntf-fg)] border-[color:var(--ntf-border)]",
+                "transition-all duration-500 ease-in-out",
+                isFadingOut ? "opacity-0 -translate-y-full" : "opacity-100 translate-y-0",
+            ].join(" ")}
+        >
+            <div className="flex items-start gap-3">
+                <i className={`fas fa-${icon} text-[color:var(--ntf-icon)] text-lg md:text-xl mt-0.5`} />
                 <div className="text-pretty">
-                    <h2 className="text-lg md:text-xl font-semibold">{title}</h2>
-                    <p className="text-md md:text-lg font-normal">{description}</p>
+                    {!!title && <h2 className="text-base md:text-lg font-semibold">{title}</h2>}
+                    {!!description && <p className="text-sm md:text-base font-normal opacity-90">{description}</p>}
                 </div>
             </div>
         </div>

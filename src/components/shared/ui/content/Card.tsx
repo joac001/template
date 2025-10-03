@@ -3,7 +3,6 @@ import { ActionButtonProps } from "@/components/shared/ui/buttons/ActionButton";
 import ActionButton from "@/components/shared/ui/buttons/ActionButton";
 import Typography from "@/components/shared/ui/text/Typography";
 import Box from "@/components/shared/ui/content/Box";
-import { getColorClasses } from "@/types/ColorType";
 
 interface CardProps {
     title: string;

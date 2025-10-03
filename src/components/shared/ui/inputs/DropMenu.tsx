@@ -1,8 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from "react";
-import Box from "@/components/shared/ui/content/Box";
-import { getColorClasses } from "@/types/ColorType";
+import {
+    useState,
+    useEffect,
+    useRef,
+    useCallback,
+    forwardRef,
+    useImperativeHandle,
+    KeyboardEvent as ReactKeyboardEvent,
+} from 'react';
+import Box from '@/components/shared/ui/content/Box';
 
 export interface DropMenuOption {
     value: string | number;
@@ -16,11 +23,8 @@ interface DropMenuProps {
     label?: string;
     name?: string; // Para FormData
     defaultValue?: string | number | null; // Para formularios no controlados
-    // Callback para comunicar cambios de valor al padre
     onValueChange?: (value: string | number | null) => void;
-    // Valor controlado desde el padre
-    value?: string | number | null;
-    // Callback para comunicar estado de validación al padre
+    value?: string | number | null; // Controlado
     onValidationChange?: (isValid: boolean, errorMessage: string | null) => void;
     required?: boolean;
     customErrorMessage?: string | null;
@@ -33,50 +37,85 @@ export interface DropMenuRef {
     focus: () => void;
 }
 
-const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
-    options,
-    disabled = false,
-    placeholder = "Selecciona una opción",
-    label = "",
-    name,
-    defaultValue,
-    onValueChange,
-    value,
-    onValidationChange,
-    required = false,
-    customErrorMessage,
-}, ref) => {
+/** Tokens de estilo basados en tu theme (variables CSS) */
+const CONTROL_BASE =
+    'flex w-full items-center justify-between px-3 py-2 text-md md:text-lg transition-all duration-200 ease-in-out ' +
+    'bg-[var(--surface-muted)] border ' +
+    'focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary-600)]/30';
 
-    const [selectedValue, setSelectedValue] = useState<string | number | null>(value ?? defaultValue ?? null);
+const CONTROL_BORDER_OK =
+    'border-[var(--border-soft)] hover:border-[var(--color-secondary-300)]';
+const CONTROL_BORDER_ERROR = 'border-red-500 hover:border-red-500';
+const CONTROL_DISABLED = 'cursor-not-allowed opacity-50';
+const CONTROL_ENABLED = 'cursor-pointer';
+
+const MENU_PANEL_BASE =
+    'absolute left-0 right-0 z-50 max-h-60 overflow-y-auto ' +
+    'border border-[var(--border-soft)] shadow-xl backdrop-blur ' +
+    'bg-[var(--card-bg)]/95';
+
+const OPTION_BASE =
+    'p-2 md:p-3 text-md md:text-lg text-pretty transition-all duration-150 ease-out';
+const OPTION_HOVER = 'hover:bg-[var(--color-secondary-600)]/12';
+const OPTION_SELECTED =
+    'bg-[var(--color-secondary-600)]/16 ring-1 ring-[var(--color-secondary-600)]/20';
+const OPTION_PLACEHOLDER = 'text-gray-400';
+
+const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(function DropMenu(
+    {
+        options,
+        disabled = false,
+        placeholder = 'Seleccione una opción',
+        label = '',
+        name,
+        defaultValue,
+        onValueChange,
+        value,
+        onValidationChange,
+        required = false,
+        customErrorMessage,
+    },
+    ref
+) {
+    const [selectedValue, setSelectedValue] = useState<string | number | null>(
+        value ?? defaultValue ?? null
+    );
     const [selectedLabel, setSelectedLabel] = useState<string>(placeholder);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isValid, setIsValid] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [activeIndex, setActiveIndex] = useState<number>(-1);
+
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLDivElement>(null);
+    const listRef = useRef<HTMLDivElement>(null);
     const hiddenInputRef = useRef<HTMLInputElement>(null);
 
-    const isEmpty = (val: string | number | null): boolean => val === null || val === undefined || val === '';
+    const isEmpty = (val: string | number | null): boolean =>
+        val === null || val === undefined || val === '';
 
-    const performValidation = useCallback((val: string | number | null): { isValid: boolean; errorMessage: string | null } => {
-        if (customErrorMessage !== undefined && customErrorMessage !== null && customErrorMessage !== '') {
-            return { isValid: false, errorMessage: customErrorMessage };
-        }
+    const performValidation = useCallback(
+        (val: string | number | null): { isValid: boolean; errorMessage: string | null } => {
+            if (customErrorMessage && customErrorMessage !== '') {
+                return { isValid: false, errorMessage: customErrorMessage };
+            }
+            if (required && isEmpty(val)) {
+                return { isValid: false, errorMessage: 'Este campo es requerido.' };
+            }
+            return { isValid: true, errorMessage: null };
+        },
+        [customErrorMessage, required]
+    );
 
-        if (required && isEmpty(val)) {
-            return { isValid: false, errorMessage: 'Este campo es requerido.' };
-        }
+    const getLabelByValue = useCallback(
+        (val: string | number | null): string => {
+            if (val === null || val === undefined) return placeholder;
+            const option = options.find((opt) => opt.value === val);
+            return option ? option.label ?? String(option.value) : placeholder;
+        },
+        [options, placeholder]
+    );
 
-        return { isValid: true, errorMessage: null };
-    }, [customErrorMessage, required]);
-
-    // Función para obtener la etiqueta de una opción basada en su valor
-    const getLabelByValue = useCallback((val: string | number | null): string => {
-        if (val === null || val === undefined) return placeholder;
-        const option = options.find(opt => opt.value === val);
-        return option ? (option.label ?? String(option.value)) : placeholder;
-    }, [options, placeholder]);
-
-    // Manejar selección de opción
     const handleSelectOption = (option: DropMenuOption) => {
         if (disabled) return;
 
@@ -88,34 +127,28 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
         setIsValid(validation.isValid);
         setErrorMessage(validation.errorMessage);
 
-        // Notificar al padre sobre el cambio de valor
-        if (onValueChange) {
-            onValueChange(option.value);
-        }
+        onValueChange?.(option.value);
+        // devolver el foco al “botón”
+        buttonRef.current?.focus();
     };
 
-    // Manejar toggle del dropdown
     const handleToggle = () => {
-        if (!disabled) {
-            setIsOpen(!isOpen);
-        }
+        if (disabled) return;
+        setIsOpen((o) => !o);
     };
 
-    // Cerrar dropdown al hacer click fuera
+    // Click fuera
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Sincronizar valor controlado desde el padre
+    // Controlado desde el padre
     useEffect(() => {
         if (value !== undefined && value !== selectedValue) {
             setSelectedValue(value);
@@ -123,28 +156,87 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
         }
     }, [value, selectedValue, getLabelByValue]);
 
-    // Sincronizar valor inicial
+    // Inicial
     useEffect(() => {
         if (selectedValue !== null) {
             setSelectedLabel(getLabelByValue(selectedValue));
         }
     }, [selectedValue, getLabelByValue]);
 
-    // Validar cuando el valor cambia o dependencias relevantes se actualizan
+    // Validación al cambiar valor
     useEffect(() => {
         const validation = performValidation(selectedValue);
         setIsValid(validation.isValid);
         setErrorMessage(validation.errorMessage);
     }, [selectedValue, performValidation]);
 
-    // Notificar al padre sobre el estado de validación
+    // Avisar validación al padre
     useEffect(() => {
-        if (onValidationChange) {
-            onValidationChange(isValid, errorMessage);
-        }
+        onValidationChange?.(isValid, errorMessage);
     }, [isValid, errorMessage, onValidationChange]);
 
-    // Exponer métodos a través de ref
+    // Cuando abre, posiciona el índice activo en el seleccionado actual
+    useEffect(() => {
+        if (isOpen) {
+            const idx = options.findIndex((o) => o.value === selectedValue);
+            setActiveIndex(idx >= 0 ? idx : 0);
+            // pequeño scroll a la opción activa
+            requestAnimationFrame(() => {
+                const el = listRef.current?.querySelector<HTMLElement>(
+                    `[data-index="${idx >= 0 ? idx : 0}"]`
+                );
+                el?.scrollIntoView({ block: 'nearest' });
+            });
+        }
+    }, [isOpen, options, selectedValue]);
+
+    const onControlKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+        if (disabled) return;
+        switch (e.key) {
+            case 'ArrowDown':
+            case 'ArrowUp':
+                e.preventDefault();
+                setIsOpen(true);
+                break;
+            case 'Enter':
+            case ' ':
+                e.preventDefault();
+                setIsOpen((o) => !o);
+                break;
+            case 'Escape':
+                setIsOpen(false);
+                break;
+        }
+    };
+
+    const onListKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+        if (!isOpen) return;
+        if (options.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setActiveIndex((i) => Math.min(i + 1, options.length - 1));
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setActiveIndex((i) => Math.max(i - 1, 0));
+        } else if (e.key === 'Home') {
+            e.preventDefault();
+            setActiveIndex(0);
+        } else if (e.key === 'End') {
+            e.preventDefault();
+            setActiveIndex(options.length - 1);
+        } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const opt = options[activeIndex];
+            if (opt) handleSelectOption(opt);
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            setIsOpen(false);
+            buttonRef.current?.focus();
+        }
+    };
+
+    // Exponer métodos
     useImperativeHandle(ref, () => ({
         getValue: () => selectedValue,
         setValue: (value: string | number | null) => {
@@ -157,14 +249,19 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
             setErrorMessage(validation.errorMessage);
             return validation.isValid;
         },
-        focus: () => dropdownRef.current?.focus()
+        focus: () => buttonRef.current?.focus(),
     }));
 
-    const { bg: bgSelectedLabel, bgHover: bgHoverLabel } = getColorClasses('primary');
+    const controlClasses = [
+        CONTROL_BASE,
+        isOpen ? 'rounded-t-lg rounded-b-none' : 'rounded-lg',
+        isValid ? CONTROL_BORDER_OK : CONTROL_BORDER_ERROR,
+        disabled ? CONTROL_DISABLED : CONTROL_ENABLED,
+    ].join(' ');
 
     return (
         <Box className="relative w-full">
-            {/* Input hidden para FormData */}
+            {/* input oculto para FormData */}
             <input
                 ref={hiddenInputRef}
                 type="hidden"
@@ -172,53 +269,92 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(({
                 value={selectedValue ?? ''}
                 required={required}
             />
+
             {label && (
                 <Box className="flex flex-row">
                     <label className="text-md font-medium md:text-lg">{label}</label>
-                    {required && <span className="pl-1 text-sm font-semibold text-red-500 sm:text-base md:text-lg">*</span>}
+                    {required && (
+                        <span className="pl-1 text-sm font-semibold text-red-500 sm:text-base md:text-lg">
+                            *
+                        </span>
+                    )}
                 </Box>
             )}
-            <div ref={dropdownRef} >
-                <Box
-                    className={`flex w-full items-center justify-between ${isOpen ? 'rounded-t-lg rounded-b-none' : 'rounded-lg'} border ${isValid ? 'border-white/15' : 'border-red-500'} bg-slate-800 cursor-pointer px-3 py-2 text-md md:text-lg transition-all duration-200 ease-in-out ${disabled ? 'cursor-not-allowed opacity-50' : isValid ? 'hover:border-white/30' : 'hover:border-red-500'}`}
+
+            <div ref={dropdownRef}>
+                {/* “botón” del select */}
+                <div
+                    ref={buttonRef}
+                    role="button"
+                    aria-haspopup="listbox"
+                    aria-expanded={isOpen}
+                    aria-invalid={!isValid}
+                    tabIndex={disabled ? -1 : 0}
+                    className={controlClasses}
                     onClick={handleToggle}
+                    onKeyDown={onControlKeyDown}
                 >
-                    <span className={selectedValue === null ? 'text-gray-400' : ''}>
+                    <span className={selectedValue === null ? OPTION_PLACEHOLDER : ''}>
                         {selectedLabel}
                     </span>
-                    <i className={`fas fa-angle-down text-sm md:text-md transition-all duration-500 ${isOpen ? 'rotate-180' : ''}`} />
-                </Box>
+                    <i
+                        className={[
+                            'fas fa-angle-down text-sm md:text-md transition-all duration-300',
+                            isOpen ? 'rotate-180' : '',
+                        ].join(' ')}
+                    />
+                </div>
 
-                {(isOpen && !disabled &&
-                    <Box className={`absolute left-0 right-0 z-50 max-h-60 overflow-y-auto border border-white/15 bg-slate-800/90 cursor-pointer shadow-xl backdrop-blur transition-all duration-100 ease-in-out ${isOpen ? 'rounded-b-lg rounded-t-none' : 'rounded-lg'}`}>
+                {/* lista */}
+                {isOpen && !disabled && (
+                    <div
+                        ref={listRef}
+                        role="listbox"
+                        aria-activedescendant={activeIndex >= 0 ? `dm-opt-${activeIndex}` : undefined}
+                        tabIndex={-1}
+                        onKeyDown={onListKeyDown}
+                        className={[
+                            MENU_PANEL_BASE,
+                            isOpen ? 'rounded-b-lg rounded-t-none' : 'rounded-lg',
+                        ].join(' ')}
+                    >
                         {options.length === 0 ? (
-                            // Quede aca
-                            <Box className="p-2 md:p-3 text-center text-md md:text-lg text-gray-400">
+                            <Box className={`${OPTION_BASE} text-center ${OPTION_PLACEHOLDER}`}>
                                 No hay opciones disponibles
                             </Box>
                         ) : (
-                            options.map((option, index) => (
-                                <Box
-                                    key={`${option.value}-${index}`}
-                                    className={`p-2 md:p-3 text-md md:text-lg text-pretty transition-all duration-600 ease-out ${selectedValue === option.value ? bgSelectedLabel : ''} ${bgHoverLabel}`}
-                                    onClick={() => handleSelectOption(option)}
-                                >
-                                    {option.label || option.value}
-                                </Box>
-                            ))
+                            options.map((option, index) => {
+                                const selected = selectedValue === option.value;
+                                const classes = [
+                                    OPTION_BASE,
+                                    OPTION_HOVER,
+                                    selected ? OPTION_SELECTED : '',
+                                ].join(' ');
+                                return (
+                                    <div
+                                        key={`${option.value}-${index}`}
+                                        id={`dm-opt-${index}`}
+                                        data-index={index}
+                                        role="option"
+                                        aria-selected={selected}
+                                        className={classes}
+                                        onClick={() => handleSelectOption(option)}
+                                    >
+                                        {option.label || option.value}
+                                    </div>
+                                );
+                            })
                         )}
-                    </Box>
+                    </div>
                 )}
             </div>
+
             {!isValid && errorMessage && (
-                <Box className="text-xs md:text-md font-light text-red-500">
-                    {errorMessage}
-                </Box>
+                <Box className="text-xs md:text-md font-light text-red-500">{errorMessage}</Box>
             )}
         </Box>
     );
 });
 
 DropMenu.displayName = 'DropMenu';
-
 export default DropMenu;

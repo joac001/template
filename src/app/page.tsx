@@ -21,17 +21,17 @@ export default function Home() {
 
     const abA: ActionButtonProps[] = [
         { icon: 'fas fa-plus', color: 'success', text: 'Agregar' } as ActionButtonProps,
-        { icon: 'fas fa-download', color: 'neutral', text: 'Descargar' } as ActionButtonProps
+        { icon: 'fas fa-download', color: 'accent', text: 'Descargar' } as ActionButtonProps
     ]
 
     const abB: ActionButtonProps[] = [
-        { icon: 'fas fa-ban', color: 'error', text: 'Eliminar' } as ActionButtonProps,
+        { icon: 'fas fa-ban', color: 'danger', text: 'Eliminar' } as ActionButtonProps,
     ]
 
     const abC: ActionButtonProps[] = [
         { icon: 'fas fa-plus', color: 'info', text: 'Agregar' } as ActionButtonProps,
         { icon: 'fas fa-warning', color: 'warning', text: 'Denunciar' } as ActionButtonProps,
-        { icon: 'fas fa-download', color: 'primary', text: 'Descargar' } as ActionButtonProps
+        { icon: 'fas fa-download', color: 'accent', text: 'Descargar' } as ActionButtonProps
     ]
 
     const options: DropMenuOption[] = [
@@ -148,7 +148,7 @@ export default function Home() {
                     <Typography variant="caption">Typography</Typography>
                     <Box className="flex flex-row w-fit gap-4">
                         <Button type="primary" text="Open modal" onClick={handleOpenModal} />
-                        <Button type="info" text="Show notification" onClick={handleShowNotification} />
+                        <Button type="accent" text="Show notification" onClick={handleShowNotification} />
                     </Box>
                 </Card>
 
@@ -160,7 +160,7 @@ export default function Home() {
                     <Typography variant="caption">Typography</Typography>
                     <Box className="flex flex-row w-fit gap-4">
                         <Button type="primary" text="Open modal" onClick={handleOpenModal} />
-                        <Button type="info" text="Show notification" onClick={handleShowNotification} />
+                        <Button type="accent" text="Show notification" onClick={handleShowNotification} />
                     </Box>
                 </Card>
             </Box>
@@ -172,7 +172,7 @@ export default function Home() {
                 <Typography variant="caption">Typography</Typography>
                 <Box className="flex flex-row w-fit gap-4">
                     <Button type="primary" text="Open modal" onClick={handleOpenModal} />
-                    <Button type="info" text="Show notification" onClick={handleShowNotification} />
+                    <Button type="accent" text="Show notification" onClick={handleShowNotification} />
                 </Box>
             </Card>
 
@@ -180,7 +180,7 @@ export default function Home() {
                 <Banner icon="fas fa-info" title="Ejemplo Informacion" description="Banner de ejemplo para alguna informacion" color="info" />
                 <Banner icon="fas fa-warning" title="Ejemplo Advertencia" description="Banner de ejemplo para alguna advertencia" color="warning" />
                 <Banner icon="fas fa-check" title="Ejemplo Exito" description="Banner de ejemplo para alguna advertencia" color="success" />
-                <Banner icon="fas fa-times" title="Ejemplo Error" description="Banner de ejemplo para alguna advertencia" color="error" />
+                <Banner icon="fas fa-times" title="Ejemplo Error" description="Banner de ejemplo para alguna advertencia" color="danger" />
             </Box>
 
             <ClientForm dropdownOptions={options} />

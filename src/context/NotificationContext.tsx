@@ -1,10 +1,9 @@
 'use client';
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import NotificationWrapper from '@/components/shared/ui/wrappers/NotificationWrapper';
-import { ColorKey } from '@/types/ColorType';
 
 interface NotificationContextType {
-    showNotification: (icon: string, color: ColorKey, title: string, description: string) => void;
+    showNotification: (icon: string, color: string, title: string, description: string) => void;
     hideNotification: () => void;
 }
 
@@ -12,7 +11,7 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 
 export interface NotificationProps {
     icon: string;
-    color: ColorKey;
+    color: string;
     title: string;
     description: string;
 }
@@ -38,7 +37,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     const [notificationProps, setNotificationProps] = useState<NotificationProps>({} as NotificationProps);
     const [duration, setDuration] = useState<number>(3000);
 
-    const showNotification = useCallback((icon: string, color: ColorKey, title: string, description: string) => {
+    const showNotification = useCallback((icon: string, color: string, title: string, description: string) => {
         setNotificationProps({ icon, color, title, description });
         setDuration(3000);
         setIsOpen(true);

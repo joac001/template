@@ -8,10 +8,21 @@ module.exports = {
         "./src/**/*.{ts,tsx}",
         "*.{js,ts,jsx,tsx,mdx}",
     ],
+    // agrega un safelist que cubra tus tokens y escalas que vas a usar
     safelist: [
-        'bg-[#ff5722]', 'border-[#ff5722]', 'text-[#ff5722]',
-        'bg-[#ff9800]', 'border-[#ff9800]', 'text-[#ff9800]',
-        'hover:bg-[#e64a19]',
+        // bg sólidos
+        { pattern: /bg-(primary|accent|neutral|success)-(50|100|200|300|400|500|600|700|800|900)/ },
+        { pattern: /hover:bg-(primary|accent|neutral|success)-(50|100|200|300|400|500|600|700|800|900)/ },
+
+        // bordes
+        { pattern: /border-(primary|accent|neutral|success)-(50|100|200|300|400|500|600|700|800|900)/ },
+
+        // gradientes
+        'bg-gradient-to-br',
+        { pattern: /from-(primary|accent|neutral|success)-(50|100|200|300|400|500|600|700|800|900)/ },
+        { pattern: /to-(primary|accent|neutral|success)-(50|100|200|300|400|500|600|700|800|900)/ },
+        { pattern: /hover:from-(primary|accent|neutral|success)-(50|100|200|300|400|500|600|700|800|900)/ },
+        { pattern: /hover:to-(primary|accent|neutral|success)-(50|100|200|300|400|500|600|700|800|900)/ },
     ],
     prefix: "",
     theme: {
