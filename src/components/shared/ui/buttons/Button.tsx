@@ -1,16 +1,18 @@
+export interface ButtonProps {
+    type?: 'primary' | 'accent' | 'neutral' | 'success';
+    text: string;
+    disabled?: boolean;
+    onClick?: () => void;
+    htmlType?: 'button' | 'submit' | 'reset';
+}
+
 export default function Button({
     type, // 'primary' | 'accent' | 'neutral' | 'success'
     text,
     disabled = false,
     onClick,
     htmlType = 'button',
-}: {
-    type?: 'primary' | 'accent' | 'neutral' | 'success';
-    text: string;
-    disabled?: boolean;
-    onClick?: () => void;
-    htmlType?: 'button' | 'submit' | 'reset';
-}) {
+}: ButtonProps) {
     return (
         <button
             type={htmlType}
