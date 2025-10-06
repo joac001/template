@@ -70,7 +70,7 @@ export default function NavBar({ title, links }: NavBarProps) {
 
     // chips del menú
     const navLinkBase =
-        "group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 select-none";
+        "group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-100 ease-in-out select-none";
     const navLinkShown = "translate-x-0 opacity-100";
     const navLinkHidden = "-translate-x-full opacity-0";
 
@@ -85,7 +85,7 @@ export default function NavBar({ title, links }: NavBarProps) {
             {/* Top bar */}
             <div
                 ref={navRef}
-                className="sticky top-2 mb-2 z-navbar rounded-2xl mx-2 md:mx-3 bg-white/70 backdrop-blur-md border border-[var(--border-soft)] shadow-lg transition-all duration-300"
+                className="sticky top-2 mb-2 z-navbar rounded-2xl mx-2 md:mx-3 bg-gradient from-white/70 to-[var(--color-primary-600)] backdrop-blur-md shadow-lg transition-all duration-300"
                 role="navigation"
                 aria-label="Barra de navegación"
             >
@@ -97,7 +97,7 @@ export default function NavBar({ title, links }: NavBarProps) {
                             aria-expanded={isOpen}
                             aria-controls="app-sidemenu"
                             aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
-                            className="w-10 h-10 rounded-xl border-2 border-[var(--border-soft)] hover:border-[var(--color-primary-400)] flex items-center justify-center transition-all duration-300 group"
+                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group"
                         >
                             <div className="space-y-1">
                                 <span
@@ -119,11 +119,12 @@ export default function NavBar({ title, links }: NavBarProps) {
                     </Box>
 
                     {/* status decorativo */}
+                    {/*
                     <Box className="hidden md:flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-[var(--color-primary-600)]" />
                         <div className="w-2 h-2 rounded-full bg-[var(--border-light)]" />
                         <div className="w-2 h-2 rounded-full bg-[var(--color-secondary-600)]" />
-                    </Box>
+                    </Box> */}
                 </Box>
             </div>
 
@@ -159,7 +160,7 @@ export default function NavBar({ title, links }: NavBarProps) {
                                 size={18}
                             />
 
-                            <span className="text-sm font-medium">{link.label}</span>
+                            <Typography variant="link">{link.label}</Typography>
                             {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white" />}
                         </button>
                     );
@@ -169,7 +170,7 @@ export default function NavBar({ title, links }: NavBarProps) {
             {/* Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/5 z-[1000] transition-opacity duration-300"
+                    className="fixed inset-0 z-[1000]"
                     onClick={() => setIsOpen(false)}
                     aria-hidden
                 />

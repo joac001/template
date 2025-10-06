@@ -176,6 +176,19 @@ export default function Home() {
                 </Box>
             </Card>
 
+            <Box className="my-4 flex flex-row gap-2">
+                <Chip text="Ejemplo" color="neutral" />
+                <Chip text="Ejemplo" color="info" />
+                <Chip text="Ejemplo" color="success" />
+                <Chip text="Ejemplo" color="warning" />
+                <Chip text="Ejemplo" color="danger" />
+                <Chip text="Ejemplo" color="accent" />
+
+                <Chip color="success" />
+                <Chip color="warning" />
+                <Chip color="danger" />
+            </Box>
+
             <Box className="">
                 <Banner icon="fas fa-info" title="Ejemplo Informacion" description="Banner de ejemplo para alguna informacion" color="info" />
                 <Banner icon="fas fa-warning" title="Ejemplo Advertencia" description="Banner de ejemplo para alguna advertencia" color="warning" />

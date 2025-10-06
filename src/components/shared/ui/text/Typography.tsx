@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 type TypographyColor = string | "inherit";
 
 interface TypographyProps {
-    variant: "h1" | "h2" | "subtitle" | "body" | "caption";
+    variant: "h1" | "h2" | "subtitle" | "body" | "link" | "caption";
     children: ReactNode;
     color?: TypographyColor;
 }
@@ -17,6 +17,7 @@ const variantClasses: Record<TypographyProps["variant"], string> = {
     h2: "font-semibold text-xl md:text-2xl lg:text-3xl",
     subtitle: "font-semibold text-lg md:text-xl",
     body: "font-normal text-lg md:text-lg",
+    link: "font-medium text-sm",
     caption: "font-light text-xs md:text-sm",
 };
 

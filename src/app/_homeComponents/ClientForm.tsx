@@ -27,8 +27,8 @@ export default function ClientForm({ dropdownOptions }: { dropdownOptions: DropM
                     label="Nombre"
                     name="nombre"
                     type="text"
-                    placeholder="Ingrese el nombre"
-                    required
+                    placeholder="Campo deshabilitado"
+                    disabled
                 />
                 <Input
                     label="Nacimiento"

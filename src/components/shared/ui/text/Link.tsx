@@ -38,7 +38,7 @@ export default function Link({
         }
     };
 
-    const hoverBg = "hover:bg-[var(--color-" + color + "-600)]/20";
+    const hoverBg = "hover:bg-[var(--text-primary)]/20";
 
     return (
         <Box
@@ -48,15 +48,16 @@ export default function Link({
             role="button"
             aria-label={`Open link to ${text}`}
             className={[
-                'flex items-center w-fit gap-2 text-lg md:text-lg text-pretty select-none',
-                'cursor-pointer transition-all duration-500 ease-in-out',
+                'relative flex items-center w-fit gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-lg md:text-lg text-pretty select-none',
+                'cursor-pointer transition-all duration-100 ease-in-out group',
                 // chip + foco accesible
-                'rounded-md px-1 focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary-600)]/40',
-                hoverBg,
+                'px-1 focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary-600)]/40',
+
             ].join(' ')}
         >
+            <Box className='absolute bg-[var(--color-primary-600)] opacity-0 w-full h-4 skew-x-[-15deg] hover:opacity-30 transition-all duration-100 ease-out origin-left' />
             {icon && <i className={`${icon} w-5 h-fit text-center`} aria-hidden />}
-            <Box className="underline md:no-underline md:hover:underline font-medium transition-all duration-500 ease-in-out">
+            <Box className="underline md:no-underline font-medium transition-all duration-200 ease-in-out">
                 {text}
             </Box>
         </Box>

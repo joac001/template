@@ -14,7 +14,7 @@ interface CardProps {
 
 export default function Card({ title, subtitle, actions, children, size = 'full' }: CardProps) {
     return (
-        <Box className={`flex ${size === 'full' ? 'w-full h-full' : 'w-fit h-fit'} rounded-2xl border-[#E0DEDE] border-solid border-2 bg-[#FAFAFA] backdrop-blur-md p-2 md:p-3 lg:p-4 shadow-xl shadow-black/30 hover:border-white/30 hover:bg-white/5 md:hover:scale-101 md:hover:shadow-2xl transition-all duration-300 ease-in-out`}>
+        <Box className={`flex ${size === 'full' ? 'w-full h-full' : 'w-fit h-fit'} rounded-2xl bg-gradient-to-br from-[#FAFAFA] via-[#FAFAFA] to-[#e6e6e6] backdrop-blur-md p-2 md:p-3 lg:p-4 shadow-lg shadow-black/30 md:hover:scale-101 md:hover:shadow-xl transition-all duration-200 ease-in-out`}>
             <Box className="flex flex-col w-full justify-between">
                 <Box className="flex flex-col">
                     <Typography variant='h2'>{title}</Typography>

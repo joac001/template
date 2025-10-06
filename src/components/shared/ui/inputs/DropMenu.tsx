@@ -39,7 +39,7 @@ export interface DropMenuRef {
 
 /** Tokens de estilo basados en tu theme (variables CSS) */
 const CONTROL_BASE =
-    'flex w-full items-center justify-between px-3 py-2 text-md md:text-lg transition-all duration-200 ease-in-out ' +
+    'flex w-full items-center justify-between px-3 py-2 text-md md:text-lg transition-all duration-200 ease-in-out' +
     'bg-[var(--surface-muted)] border ' +
     'focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary-600)]/30';
 
@@ -54,12 +54,9 @@ const MENU_PANEL_BASE =
     'border border-[var(--border-soft)] shadow-xl backdrop-blur ' +
     'bg-[var(--card-bg)]/95';
 
-const OPTION_BASE =
-    'p-2 md:p-3 text-md md:text-lg text-pretty transition-all duration-150 ease-out';
+const OPTION_BASE = 'p-2 md:p-3 text-md md:text-lg text-pretty transition-all duration-150 ease-out text-gray-600 cursor-pointer';
 const OPTION_HOVER = 'hover:bg-[var(--color-secondary-600)]/12';
-const OPTION_SELECTED =
-    'bg-[var(--color-secondary-600)]/16 ring-1 ring-[var(--color-secondary-600)]/20';
-const OPTION_PLACEHOLDER = 'text-gray-400';
+const OPTION_SELECTED = 'bg-[var(--color-secondary-600)]/30 text-gray-800';
 
 const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(function DropMenu(
     {
@@ -272,9 +269,9 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(function DropMenu(
 
             {label && (
                 <Box className="flex flex-row">
-                    <label className="text-md font-medium md:text-lg">{label}</label>
+                    <label className="text-md font-medium text-[var(--text-primary)]">{label}</label>
                     {required && (
-                        <span className="pl-1 text-sm font-semibold text-red-500 sm:text-base md:text-lg">
+                        <span className="pl-1 text-sm text-red-500">
                             *
                         </span>
                     )}
@@ -294,7 +291,7 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(function DropMenu(
                     onClick={handleToggle}
                     onKeyDown={onControlKeyDown}
                 >
-                    <span className={selectedValue === null ? OPTION_PLACEHOLDER : ''}>
+                    <span className={selectedValue === null ? 'text-gray-600' : 'text-black'}>
                         {selectedLabel}
                     </span>
                     <i
@@ -319,7 +316,7 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(function DropMenu(
                         ].join(' ')}
                     >
                         {options.length === 0 ? (
-                            <Box className={`${OPTION_BASE} text-center ${OPTION_PLACEHOLDER}`}>
+                            <Box className={`${OPTION_BASE} text-center`}>
                                 No hay opciones disponibles
                             </Box>
                         ) : (

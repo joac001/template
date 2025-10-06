@@ -63,8 +63,7 @@ function ActionCore({
                 // sizing
                 "py-1 px-2 md:py-2 md:px-4",
                 // efectos
-                "transition-transform duration-200 ease-in-out hover:scale-105",
-                "border-2", // si tienes --border-light/soft puedes sumarlos acá
+                "transition-transform duration-100 ease-in-out hover:scale-105",
                 className,
             ].join(" ")}
         >

@@ -17,10 +17,10 @@ export default function Button({
             data-variant={type ?? undefined}
             className={`
         flex w-fit h-fit
-        ${type ? 'bg-[var(--btn-bg)] hover:bg-[var(--btn-hover)] --border-light --border-soft text-white' : 'bg-transparent text-black border-transparent'}
+        ${type ? 'bg-[var(--btn-bg)] hover:bg-[var(--btn-hover)] text-white' : 'bg-transparent text-black'}
         ${type ? 'bg-[image:var(--btn-bg-gradient)]' : ''}
-        rounded-full border-2 px-3 py-2 md:px-3 md:py-1
-        transition-all duration-200 ease-in-out
+        rounded-full px-3 py-2 md:px-3 md:py-1
+        transition-all duration-100 ease-in-out
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}
       `}
             onClick={onClick}
