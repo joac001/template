@@ -155,7 +155,7 @@ export default function Home() {
                     <Typography variant="caption">Typography</Typography>
                     <Box className="flex flex-row w-fit gap-4">
                         <Button type="primary" text="Open modal" onClick={handleOpenModal} />
-                        <Button type="accent" text="Show notification" onClick={() => handleShowNotification("neutral")} />
+                        <Button type="secondary" text="Show notification" onClick={() => handleShowNotification("neutral")} />
                     </Box>
                 </Card>
 
@@ -167,7 +167,7 @@ export default function Home() {
                     <Typography variant="caption">Typography</Typography>
                     <Box className="flex flex-row w-fit gap-4">
                         <Button type="primary" text="Open modal" onClick={handleOpenModal} />
-                        <Button type="accent" text="Show notification" onClick={() => handleShowNotification("neutral")} />
+                        <Button type="secondary" text="Show notification" onClick={() => handleShowNotification("neutral")} />
                     </Box>
                 </Card>
             </Box>
@@ -179,7 +179,7 @@ export default function Home() {
                 <Typography variant="caption">Typography</Typography>
                 <Box className="flex flex-row w-fit gap-4">
                     <Button type="primary" text="Open modal" onClick={handleOpenModal} />
-                    <Button type="accent" text="Show notification" onClick={() => handleShowNotification("neutral")} />
+                    <Button type="secondary" text="Show notification" onClick={() => handleShowNotification("neutral")} />
                 </Box>
             </Card>
 

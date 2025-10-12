@@ -4,8 +4,8 @@
 @tailwind utilities;
 
 :root {
-  /* Amber 100 */
-  --background: oklch(92.4% 0.12 95.746);
+  /* Amber 50 */
+  --background: oklch(98.7% 0.022 95.277);
   --foreground: #272727;
   --foreground-contrast: #ffffff;
 
@@ -20,13 +20,13 @@
   --color-primary-soft: color-mix(in srgb, var(--color-primary) 55%, var(--color-primary-light) 45%);
   --color-primary-strong: color-mix(in srgb, var(--color-primary) 85%, var(--color-primary-dark) 15%);
 
-  /* Indigo */
+  /* Cyan */
   /* 700 */
-  --color-secondary-dark: oklch(45.7% 0.24 277.023);
+  --color-secondary-dark: oklch(52% 0.105 223.128);
   /* 600 */
-  --color-secondary: oklch(51.1% 0.262 276.966);
+  --color-secondary: oklch(60.9% 0.126 221.723);
   /* 500 */
-  --color-secondary-light: oklch(58.5% 0.233 277.117);
+  --color-secondary-light: oklch(60.9% 0.126 221.723);
   --color-secondary-foreground: var(--foreground-contrast);
   --color-secondary-soft: color-mix(in srgb, var(--color-secondary) 60%, var(--color-secondary-light) 40%);
   --color-secondary-strong: color-mix(in srgb, var(--color-secondary) 80%, var(--color-secondary-dark) 20%);
