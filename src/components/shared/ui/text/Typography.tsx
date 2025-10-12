@@ -1,15 +1,9 @@
 import type { ReactNode } from "react";
 
-/**
- * Extra: permitimos "inherit" para que en componentes como Banner
- * el texto tome el color del contenedor (p.ej. --ntf-fg).
- */
-type TypographyColor = string | "inherit";
 
 interface TypographyProps {
     variant: "h1" | "h2" | "subtitle" | "body" | "link" | "caption";
     children: ReactNode;
-    color?: TypographyColor;
 }
 
 const variantClasses: Record<TypographyProps["variant"], string> = {
@@ -21,10 +15,9 @@ const variantClasses: Record<TypographyProps["variant"], string> = {
     caption: "font-light text-xs md:text-sm",
 };
 
-export default function Typography({ variant, children, color }: TypographyProps) {
+export default function Typography({ variant, children }: TypographyProps) {
     // Si no viene color, heredamos o caemos al token base del tema.
-    const colorClass =
-        color ? "text-[var(--color-" + color + "-700)]" : "text-black";
+    const colorClass = "inherit"
 
     // En caption damos un pelín de menor contraste por defecto
     const extra =

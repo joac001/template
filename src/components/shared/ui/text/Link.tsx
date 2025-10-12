@@ -8,7 +8,6 @@ export interface LinkProps {
     url: string;
     newWindow?: boolean;
     icon?: string;
-    color?: string;
 }
 
 export default function Link({
@@ -16,7 +15,6 @@ export default function Link({
     text,
     url,
     newWindow = true,
-    color = 'primary',
 }: LinkProps) {
     const normalizeUrl = (u: string) =>
         u.startsWith('http://') || u.startsWith('https://') ? u : `https://${u}`;
@@ -38,8 +36,6 @@ export default function Link({
         }
     };
 
-    const hoverBg = "hover:bg-[var(--text-primary)]/20";
-
     return (
         <Box
             onClick={handleClick}
@@ -51,11 +47,11 @@ export default function Link({
                 'relative flex items-center w-fit gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-lg md:text-lg text-pretty select-none',
                 'cursor-pointer transition-all duration-100 ease-in-out group',
                 // chip + foco accesible
-                'px-1 focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary-600)]/40',
+                'px-1 focus:outline-none focus:ring-2 focus:ring-[var(--interactive-ring)]',
 
             ].join(' ')}
         >
-            <Box className='absolute bg-[var(--color-primary-600)] opacity-0 w-full h-4 skew-x-[-15deg] hover:opacity-30 transition-all duration-100 ease-out origin-left' />
+            <Box className='absolute bg-[var(--color-primary-soft)] opacity-0 w-full h-4 skew-x-[-15deg] hover:opacity-30 transition-all duration-100 ease-out origin-left' />
             {icon && <i className={`${icon} w-5 h-fit text-center`} aria-hidden />}
             <Box className="underline md:no-underline font-medium transition-all duration-200 ease-in-out">
                 {text}

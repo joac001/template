@@ -193,8 +193,8 @@ const Input = forwardRef<InputRef, InputProps>(({
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     const hiddenDateInputRef = useRef<HTMLInputElement>(null);
 
-    const disabledClass = disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-text';
-    const inputClass = `w-full p-2 rounded-lg text-[var(--text-primary)] focus:outline-none border-2 ${isValid ? `focus:ring-2 border-[var(--border-soft)]` : 'border-red-500 focus:ring-0'} ${disabledClass}`;
+    const disabledClass = disabled ? 'opacity-75 cursor-not-allowed' : 'cursor-text';
+    const inputClass = `w-full p-2 rounded-lg text-[var(--text-primary)] bg-[var(--surface-muted)] focus:outline-none border-2 ${isValid ? `border-[var(--border-soft)] focus:ring-2 focus:ring-[var(--interactive-ring)]` : 'border-[var(--color-danger)] focus:ring-2 focus:ring-[var(--color-danger)]'} ${disabledClass}`;
 
     // Función para validar el input combinando validación por defecto y personalizada
     const performValidation = useCallback((val: string | number): { isValid: boolean, errorMessage: string | null } => {
@@ -353,11 +353,11 @@ const Input = forwardRef<InputRef, InputProps>(({
         <Box className={`w-full`}>
             <Box className={`flex flex-row ${disabledClass}`}>
                 {label && <label className="text-md font-medium md:text-lg text-[var(--text-primary)]">{label}</label>}
-                {required && <span className="pl-1 text-sm font-semibold text-red-500 sm:text-base md:text-lg">*</span>}
+                {required && <span className="pl-1 text-sm font-semibold text-[color:var(--color-danger)] sm:text-base md:text-lg">*</span>}
             </Box>
             <Box className={`relative ${disabledClass}`}>
                 {!rows && icon && (
-                    <Box className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none z-10">
+                    <Box className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[color:var(--text-muted)] pointer-events-none z-10">
                         <i className={icon} />
                     </Box>
                 )}
@@ -401,7 +401,7 @@ const Input = forwardRef<InputRef, InputProps>(({
                     <button
                         type="button"
                         onClick={togglePasswordVisibility}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black focus:outline-none z-10"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)] focus:outline-none z-10"
                         disabled={disabled}
                     >
                         {showPassword ? (
@@ -415,7 +415,7 @@ const Input = forwardRef<InputRef, InputProps>(({
                     <button
                         type="button"
                         onClick={openDatePicker}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black focus:outline-none z-10"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)] focus:outline-none z-10"
                         disabled={disabled}
                     >
                         <i className="far fa-calendar-alt" />
@@ -423,7 +423,7 @@ const Input = forwardRef<InputRef, InputProps>(({
                 )}
             </Box>
             {!isValid && errorMessage && (
-                <Box className="text-xs md:text-md font-light text-red-500">
+                <Box className="text-xs md:text-md font-light text-[color:var(--color-danger)]">
                     {errorMessage}
                 </Box>
             )}

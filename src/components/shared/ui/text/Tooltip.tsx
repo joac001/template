@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 
 type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
@@ -158,11 +158,20 @@ export default function Tooltip({ content, children, placement = 'top', offset =
     const tooltipNode = useMemo(() => {
         if (!isVisible || !content) return null;
 
+        const tooltipStyle: CSSProperties = {
+            top: position.top,
+            left: position.left,
+            transform: position.transform,
+            backgroundImage: 'var(--surface)',
+            backgroundColor: 'var(--surface-tint)',
+            backdropFilter: 'blur(var(--glass-blur, 18px))'
+        };
+
         return createPortal(
             <div
                 ref={tooltipRef}
-                style={{ top: position.top, left: position.left, transform: position.transform }}
-                className={`pointer-events-none fixed z-tooltip flex max-w-xs items-center rounded-md bg-gray-900/95 px-3 py-2 text-sm text-white shadow-xl transition-opacity duration-150`}
+                style={tooltipStyle}
+                className={`pointer-events-none fixed z-tooltip flex max-w-xs items-center rounded-md bg-transparent px-3 py-2 text-sm text-[color:var(--text-primary)] border border-[var(--border-soft)] shadow-xl transition-opacity duration-150`}
                 role="tooltip"
             >
                 {content}

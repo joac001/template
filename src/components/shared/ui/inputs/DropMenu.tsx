@@ -38,25 +38,26 @@ export interface DropMenuRef {
 }
 
 /** Tokens de estilo basados en tu theme (variables CSS) */
-const CONTROL_BASE =
-    'flex w-full items-center justify-between px-3 py-2 text-md md:text-lg transition-all duration-200 ease-in-out' +
-    'bg-[var(--surface-muted)] border ' +
-    'focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary-600)]/30';
+const CONTROL_BASE = [
+    'flex w-full items-center justify-between px-3 py-2 text-md md:text-lg transition-all duration-200 ease-in-out',
+    'bg-[var(--surface-muted)] border backdrop-blur-sm',
+    'focus:outline-none focus:ring-2 focus:ring-[var(--interactive-ring)]',
+].join(' ');
 
 const CONTROL_BORDER_OK =
-    'border-[var(--border-soft)] hover:border-[var(--color-secondary-300)]';
-const CONTROL_BORDER_ERROR = 'border-red-500 hover:border-red-500';
+    'border-[var(--border-soft)]';
+const CONTROL_BORDER_ERROR = 'border-[var(--color-danger)] hover:border-[var(--color-danger-strong)]';
 const CONTROL_DISABLED = 'cursor-not-allowed opacity-50';
 const CONTROL_ENABLED = 'cursor-pointer';
 
 const MENU_PANEL_BASE =
     'absolute left-0 right-0 z-50 max-h-60 overflow-y-auto ' +
-    'border border-[var(--border-soft)] shadow-xl backdrop-blur ' +
-    'bg-[var(--card-bg)]/95';
+    'border border-[var(--border-soft)] shadow-xl backdrop-blur-md ' +
+    'bg-[var(--card-bg)]';
 
-const OPTION_BASE = 'p-2 md:p-3 text-md md:text-lg text-pretty transition-all duration-150 ease-out text-gray-600 cursor-pointer';
-const OPTION_HOVER = 'hover:bg-[var(--color-secondary-600)]/12';
-const OPTION_SELECTED = 'bg-[var(--color-secondary-600)]/30 text-gray-800';
+const OPTION_BASE = 'p-2 md:p-3 text-md md:text-lg text-pretty transition-all duration-150 ease-out text-[color:var(--text-muted)] cursor-pointer';
+const OPTION_HOVER = 'hover:bg-[color:var(--color-primary-soft)]/50';
+const OPTION_SELECTED = 'bg-[color:var(--color-primary-soft)]/60 text-[color:var(--color-primary-foreground)]';
 
 const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(function DropMenu(
     {
@@ -269,9 +270,9 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(function DropMenu(
 
             {label && (
                 <Box className="flex flex-row">
-                    <label className="text-md font-medium text-[var(--text-primary)]">{label}</label>
+                    <label className="text-md font-medium text-[color:var(--text-primary)]">{label}</label>
                     {required && (
-                        <span className="pl-1 text-sm text-red-500">
+                        <span className="pl-1 text-sm text-[color:var(--color-danger)]">
                             *
                         </span>
                     )}
@@ -285,13 +286,12 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(function DropMenu(
                     role="button"
                     aria-haspopup="listbox"
                     aria-expanded={isOpen}
-                    aria-invalid={!isValid}
                     tabIndex={disabled ? -1 : 0}
                     className={controlClasses}
                     onClick={handleToggle}
                     onKeyDown={onControlKeyDown}
                 >
-                    <span className={selectedValue === null ? 'text-gray-600' : 'text-black'}>
+                    <span className={selectedValue === null ? 'text-[color:var(--text-muted)]' : 'text-[color:var(--text-primary)]'}>
                         {selectedLabel}
                     </span>
                     <i
@@ -347,7 +347,7 @@ const DropMenu = forwardRef<DropMenuRef, DropMenuProps>(function DropMenu(
             </div>
 
             {!isValid && errorMessage && (
-                <Box className="text-xs md:text-md font-light text-red-500">{errorMessage}</Box>
+                <Box className="text-xs md:text-md font-light text-[color:var(--color-danger)]">{errorMessage}</Box>
             )}
         </Box>
     );

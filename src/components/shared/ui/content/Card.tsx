@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { ActionButtonProps } from "@/components/shared/ui/buttons/ActionButton";
 import ActionButton from "@/components/shared/ui/buttons/ActionButton";
 import Typography from "@/components/shared/ui/text/Typography";
@@ -13,8 +13,17 @@ interface CardProps {
 }
 
 export default function Card({ title, subtitle, actions, children, size = 'full' }: CardProps) {
+    const glassStyle: CSSProperties = {
+        backgroundImage: 'var(--card-glass)',
+        backgroundColor: 'var(--surface-tint)',
+        // backdropFilter: 'blur(var(--glass-blur, 22px))'
+    };
+
     return (
-        <Box className={`flex ${size === 'full' ? 'w-full h-full' : 'w-fit h-fit'} rounded-2xl bg-gradient-to-br from-[#FAFAFA] via-[#FAFAFA] to-[#e6e6e6] backdrop-blur-md p-2 md:p-3 lg:p-4 shadow-lg shadow-black/30 md:hover:scale-101 md:hover:shadow-xl transition-all duration-200 ease-in-out`}>
+        <Box
+            className={`flex ${size === 'full' ? 'w-full h-full' : 'w-fit h-fit'} rounded-2xl p-2 md:p-3 lg:p-4 shadow-lg transition-all duration-200 ease-in-out`}
+            style={glassStyle}
+        >
             <Box className="flex flex-col w-full justify-between">
                 <Box className="flex flex-col">
                     <Typography variant='h2'>{title}</Typography>
@@ -28,7 +37,7 @@ export default function Card({ title, subtitle, actions, children, size = 'full'
             <Box className="flex flex-col items-end gap-1">
                 {actions &&
                     actions.map((action, index) =>
-                        <ActionButton key={index} icon={action.icon} color={action.color} text={action.text} onClick={action.onClick} tooltip={action.tooltip} />
+                        <ActionButton key={index} icon={action.icon} type={action.type} text={action.text} onClick={action.onClick} tooltip={action.tooltip} />
                     )
                 }
             </Box>

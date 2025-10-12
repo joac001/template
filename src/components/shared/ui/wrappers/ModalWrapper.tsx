@@ -64,22 +64,29 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
 
     if (!shouldRender) return null;
 
+    const panelStyle: React.CSSProperties = {
+        backgroundImage: 'var(--surface)',
+        backgroundColor: 'var(--surface-tint)',
+        backdropFilter: 'blur(var(--glass-blur, 18px))'
+    };
+
     return (
         <div
-            className={`fixed inset-0 z-modal flex items-center justify-center bg-black/20 backdrop-blur-md transition-opacity duration-700 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+            className={`fixed inset-0 z-modal flex items-center justify-center bg-[var(--surface-overlay)] backdrop-blur-md transition-opacity duration-700 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
             onClick={handleOverlayClick}
         >
             <div
-                className={`relative max-w-4xl w-full mx-4 max-h-[90vh] bg-black rounded-lg shadow-2xl overflow-hidden transition-all duration-300 ease-in-out ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-10 scale-95'}`}
+                className={`relative max-w-4xl w-full mx-4 max-h-[90vh] bg-transparent text-[color:var(--text-primary)] rounded-lg shadow-2xl overflow-hidden transition-all duration-300 ease-in-out ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-10 scale-95'}`}
+                style={panelStyle}
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Botón de cerrar */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-gray-700 hover:bg-gray-400 rounded-full transition-colors duration-200"
+                    className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-[var(--surface-muted)] hover:bg-[var(--color-info-light)] rounded-full transition-colors duration-200"
                     aria-label="Cerrar modal"
                 >
-                    <i className="fas fa-times text-white"></i>
+                    <i className="fas fa-times text-[color:var(--text-primary)]"></i>
                 </button>
 
                 {/* Contenido del modal con scroll propio */}
